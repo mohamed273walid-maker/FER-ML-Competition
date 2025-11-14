@@ -36,7 +36,7 @@ jobs:
         run: |
           for file in submission/*.csv; do
             echo "Evaluating $file..."
-            python evaluate.py "$file" "private_data/test_labels.csv"
+            python evaluate.py "$file" "private/test_labels.csv"
           done
 
       - name: Commit leaderboard
