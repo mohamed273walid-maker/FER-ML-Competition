@@ -1,18 +1,43 @@
-name: Upload private test labels
+name: Evaluate Submissions
 
 on:
-  workflow_dispatch:   # run manually once
+  pull_request:
+    paths:
+      - 'submission/*.csv'  # Trigger only when a submission CSV is added/modified
 
 jobs:
-  upload:
+  evaluate:
     runs-on: ubuntu-latest
+
     steps:
+      # 1️⃣ Checkout PR branch (public repo)
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Upload encrypted private labels
-        uses: actions/upload-artifact@v4
+      # 2️⃣ Download private test labels artifact
+      - name: Download private test labels
+        uses: actions/download-artifact@v4
         with:
-          name: private-labels
-          path: private/test_labels.csv
-          retention-days: 90
+          name: test_labels      # must match artifact name from upload workflow
+          path: private_data     # folder where the artifact will be stored
+
+      # 3️⃣ Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 4️⃣ Install dependencies
+      - name: Install dependencies
+        run: pip install pandas scikit-learn numpy
+
+      # 5️⃣ Evaluate all submissions in 'submission/' folder
+      - name: Evaluate submissions
+        run: |
+          mkdir -p evaluation_results
+          for file in submission/*.csv; do
+            echo "Evaluating $file..."
+            python evaluate.py "$file" "private_data/test_labels.csv" > evaluation_results/$(basename "$file" .csv)_score.txt
+          done
+
+    
