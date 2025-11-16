@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "=== Cleaning untracked files ==="
           # Remove the directories/files we don't want to track
-          rm -rf private_data/ public_main/ 
+          rm -rf private_data/ 
           echo "Remaining files:"
           ls -la
       
@@ -61,7 +61,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add results.csv results/
+          git add final_leaderboard.csv 
           git commit -m "Update leaderboard and team results from PR #${{ github.event.number }} [Automated]"
           git push origin main
         env:
