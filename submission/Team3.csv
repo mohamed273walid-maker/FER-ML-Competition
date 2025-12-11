@@ -1,4 +1,4 @@
-id,predicted_label
+image_id,emotion
 0,4
 1,4
 2,6
